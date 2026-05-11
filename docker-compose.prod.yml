@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: ai_trader_backend
+    restart: always
+    env_file: .env
+    networks:
+      - space_shared # 链接到 infra 项目中的共享网络
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: ai_trader_worker
+    restart: always
+    command: python service/server/worker.py
+    env_file: .env
+    depends_on:
+      - backend
+    networks:
+      - space_shared
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: ai_trader_ui
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - space_shared
+
+networks:
+  space_shared:
+    external: true

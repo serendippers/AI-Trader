@@ -1,0 +1,6 @@
+services: {}
+
+networks:
+  shared:
+    external: true
+    name: space_shared
